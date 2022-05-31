@@ -1,49 +1,35 @@
-# Example python/pyxnat Docker image and XNAT command
+# ROIResizer-Container 
 
-##
+## Introduction
 
-### Contents
+> This container goes through the entire project on XNAT and finds all ROI's analyises within a certain number of hours of today. It also lets you filter for whether to include duplicates of data as well. 
 
-- build.sh 
+##  Design: 
+  * Used python 
+  * full list of packages needed: (listed within the Dockerfile.base)
+    * csv
+    * argparse 
+    * pandas 
+    * numpy
     
-    Builds and tags the Docker image as `xnat/pyxnat-demo:latest`. Customize the tag in this image to fit your specification
+   
+##  How to use:
+  > All the scripts are located within the "workspace" dir - any edits you will need to make for your specific use case will be with "scale.py". Once edits are done run ./build.sh to build your docker container. Specifics to edit within docker are the Dockerfile.base file for naming the container, pushing to git and libraries used. If you want integration with XNAT navigate to the "xnat" folder and edit the command.json documentation available at @ https://wiki.xnat.org/container-service/making-your-docker-image-xnat-ready-122978887.html#MakingyourDockerImage%22XNATReady%22-installing-a-command-from-an-xnat-ready-image
 
-- command2label.py
-    
-    Script used in `build.sh` to store `command.json` as a Docker image label.
+  * NOTE this was designed to be generalized to most RT structs so it should work just fine on its own with the exception of the rtstruct upload part that is unique to XNAT 
 
-- Dockerfile.base
+## Running (ON XNAT): 
+  * Navigate to the project on mirrir and click on "Run containers"
+  * The container should show up as "Runs collectPyrad container with project mounted" and click it
+  * Fill out necessary arguments and hit run
 
-    Used by `build.sh` as a base for the final `Dockerfile`.
+## Running in general: 
+  * There are arguments needed to run this pipline which can be found within the findandCollectPyrad.py script 
+  * There is an upload componenet unique to XNAT if you just want to run it without uploading you can comment out that component. 
 
-- command.json
-
-    XNAT specific format describing the interface between XNAT Container Service and the Docker image.
-
-- sample-code.py
-
-    Sample pyxnat code to demonstrate XNAT host and filesystem access.
-
-- sample-data folder
-
-    Sample project-level directory structure meant to represent a project-level input mount while running this container in XNAT.
-    
-    
-    
-### Docker from command line 
-The Docker image can be run on the command line, using the provided sample data and settings for a running XNAT host. When running this container via XNAT Container Service, these environment variables are set to real values at container run-time.
-
-The following Docker cli command assumes:
-XNAT username is 'admin'
-XNAT password is 'admin'
-XNAT host is 'localhost'
-Project label is 'test'
-
-`docker run -ti --rm  -e XNAT_HOST=http://localhost -e XNAT_PASS=admin -e XNAT_USER=admin -e PROJECT=test -v $PWD/sample-data/:/input  xnat/pyxnat-demo:latest python workspace/sample-code.py`
-
-You can also run the image interactively:
-
-`docker run -ti --rm  -e XNAT_HOST=http://localhost -e XNAT_PASS=admin -e XNAT_USER=admin -e PROJECT=test -v $PWD/sample-data/:/input  xnat/pyxnat-demo:latest bash`
-
-which opens `bash` in the running container. 
-
+## NOTES: 
+  * Parts of the scripts within workspace were written with project specificity in mind so please keep that in mind as you use this code 
+  * It is recommended that you have some experience working with docker and specficially building containers for xnat for this to work for your use cases 
+  * If you just want to use the code for your own work without docker stuff just navigate to workspace copy the python files from it and edit them 
+  
+## Future:   
