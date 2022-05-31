@@ -1,0 +1,175 @@
+{
+    "name": "pyradFinder",
+    "label": "pyradExp",
+    "description": "Create csv file with all pyrad run data filtered and collected",
+    "version": "1.0",
+    "schema-version": "1.0",
+    "image": "registry.nrg.wustl.edu/docker/nrg-repo/yash/pyradcollector:1.0",
+    "type": "docker",
+    "command-line": "python findAndCollectPyrad.py #DATEFORMAT# #WITHIN# #DUPLICATES# ",
+    "override-entrypoint": true,
+    "mounts": [
+      {
+        "name": "in",
+        "writable": false,
+        "path": "/input"
+      },
+      {
+        "name": "out",
+        "writable": true,
+        "path": "/output"
+      }
+    ],
+    "environment-variables": {
+      "PROJECT": "#PROJECT#"
+    },
+    "ports": {},
+    "inputs": [
+      {
+        "name": "dateformat",
+        "label": null,
+        "description": "Date format to search for i.e '%Y%m%d%H%M%S' ",
+        "type": "string",
+        "matcher": null,
+        "default-value": "%Y%m%d%H%M%S",
+        "required": false,
+        "replacement-key": "#DATEFORMAT#",
+        "sensitive": null,
+        "command-line-flag": "-f",
+        "command-line-separator": " ",
+        "true-value": null,
+        "false-value": null,
+        "select-values": [],
+        "multiple-delimiter": null
+      },
+      {
+        "name": "within",
+        "label": null,
+        "description": "Filter for Pyrad that were generated within x hours of today",
+        "type": "int",
+        "matcher": null,
+        "default-value": "",
+        "required": false,
+        "replacement-key": "#WITHIN#",
+        "sensitive": null,
+        "command-line-flag": "-w",
+        "command-line-separator": " ",
+        "true-value": null,
+        "false-value": null,
+        "select-values": [],
+        "multiple-delimiter": null
+      },
+      {
+        "name": "duplicates",
+        "label": null,
+        "description": "Allow duplicates of analyisis for roi within a session",
+        "type": "boolean",
+        "matcher": null,
+        "default-value": "",
+        "required": false,
+        "replacement-key": "#DUPLICATES#",
+        "sensitive": null,
+        "command-line-flag": "-d",
+        "command-line-separator": " ",
+        "true-value": "True",
+        "false-value": "False",
+        "select-values": [],
+        "multiple-delimiter": null
+      },
+      {
+        "name": "project-label",
+        "label": null,
+        "description": "",
+        "type": "string",
+        "matcher": null,
+        "default-value": null,
+        "required": true,
+        "replacement-key": "#PROJECT#",
+        "sensitive": null,
+        "command-line-flag": null,
+        "command-line-separator": null,
+        "true-value": null,
+        "false-value": null,
+        "select-values": [],
+        "multiple-delimiter": null
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "description": "The output is a csv with all the data of filter pyrad runs collected",
+        "required": true,
+        "mount": "out",
+        "path": null,
+        "glob": null
+      }
+    ],
+    "xnat": [
+      {
+        "name": "Runs collectPyrad container with project mounted",
+        "label": "Runs collectPyrad container with project mounted",
+        "description": "",
+        "contexts": [
+          "xnat:projectData"
+        ],
+        "external-inputs": [
+          {
+            "name": "project",
+            "label": null,
+            "description": "Input project",
+            "type": "Project",
+            "matcher": null,
+            "default-value": null,
+            "required": true,
+            "replacement-key": null,
+            "sensitive": null,
+            "provides-value-for-command-input": null,
+            "provides-files-for-command-mount": "in",
+            "via-setup-command": null,
+            "user-settable": null,
+            "load-children": true
+          }
+        ],
+        "derived-inputs": [
+          {
+            "name": "project-label",
+            "label": "project-label",
+            "description": "",
+            "type": "string",
+            "matcher": null,
+            "default-value": null,
+            "required": true,
+            "replacement-key": null,
+            "sensitive": null,
+            "provides-value-for-command-input": "project-label",
+            "provides-files-for-command-mount": null,
+            "user-settable": null,
+            "load-children": true,
+            "derived-from-wrapper-input": "project",
+            "derived-from-xnat-object-property": "label",
+            "via-setup-command": null,
+            "multiple": false,
+            "parser": null
+          }
+        ],
+        "output-handlers": [
+          {
+            "name": "output-resource",
+            "accepts-command-output": "output",
+            "via-wrapup-command": null,
+            "as-a-child-of": "project",
+            "type": "Resource",
+            "label": "CollectedPyradData",
+            "format": null,
+            "description": null,
+            "content": null,
+            "tags": []
+          }
+        ]
+      }
+    ],
+    "container-labels": {},
+    "generic-resources": {},
+    "ulimits": {}
+  }
+  
